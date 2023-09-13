@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '../context/AuthContext';
 import '../styles/App.css';
 import Layout from './Layout';
 import Nav from './Nav';
@@ -11,16 +12,18 @@ import Signup from './pages/Signup';
 function App() {
   return (
     <>
-      <Nav />
-      <Layout>
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/result" element={<Result />} />
-        </Routes>
-      </Layout>
+      <AuthProvider>
+        <Nav />
+        <Layout>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/result" element={<Result />} />
+          </Routes>
+        </Layout>
+      </AuthProvider>
     </>
   );
 }
