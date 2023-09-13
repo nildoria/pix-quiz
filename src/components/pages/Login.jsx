@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import classes from '../../styles/Login.module.css';
 import Button from '../Button';
 import Form from '../Form';
@@ -24,7 +25,7 @@ function Login() {
           </Button>
 
           <div className="info">
-            Dont have an account? <a href="signup.html">Signup</a> instead.
+            Dont have an account? <Link to="/signup">Signup</Link> instead.
           </div>
         </Form>
       </div>
