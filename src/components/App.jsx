@@ -3,6 +3,7 @@ import { AuthProvider } from '../context/AuthContext';
 import '../styles/App.css';
 import Layout from './Layout';
 import Nav from './Nav';
+import PrivateRoute from './PrivateRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Quiz from './pages/Quiz';
@@ -16,11 +17,13 @@ function App() {
         <Nav />
         <Layout>
           <Routes>
-            <Route index element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/quiz" element={<Quiz />} />
-            <Route path="/result" element={<Result />} />
+            <Route element={<PrivateRoute />}>
+              <Route index element={<Home />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/result" element={<Result />} />
+            </Route>
           </Routes>
         </Layout>
       </AuthProvider>
