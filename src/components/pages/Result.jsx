@@ -1,11 +1,54 @@
+import _ from 'lodash';
+import { useLocation, useParams } from 'react-router-dom';
+import useAnswers from '../../hooks/useAnswers';
 import Analysis from '../Analysis';
 import Summary from '../Summary';
 
 function Result() {
+  const { id } = useParams();
+  const { state } = useLocation();
+  const { qna } = state;
+
+  const { loading, error, answers } = useAnswers(id);
+
+  function calculateScore() {
+    let score = 0;
+
+    answers.forEach((questions, index1) => {
+      let correctIndexes = [],
+        checkedIndexes = [];
+
+      questions.options.forEach((option, index2) => {
+        if (option.correct) {
+          correctIndexes.push(index2);
+        }
+
+        if (qna[index1].options[index2].checked) {
+          checkedIndexes.push(index2);
+          option.checked = true;
+        }
+      });
+
+      if (_.isEqual(correctIndexes, checkedIndexes)) {
+        score = score + 5;
+      }
+    });
+
+    return score;
+  }
+
+  const userScore = calculateScore();
+
   return (
     <>
-      <Summary />
-      <Analysis />
+      {loading && <div>Loading...</div>}
+      {error && <div>Error loading result!</div>}
+      {answers && answers.length > 0 && (
+        <>
+          <Summary score={userScore} noq={answers.length} />
+          <Analysis answers={answers} />
+        </>
+      )}
     </>
   );
 }

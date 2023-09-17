@@ -1,6 +1,8 @@
+import { getDatabase, ref, set } from 'firebase/database';
 import _ from 'lodash';
 import { useEffect, useReducer, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import useQuestions from '../../hooks/useQuestions';
 import Answers from '../Answers';
 import MiniPlayer from '../MiniPlayer';
@@ -32,12 +34,12 @@ const reducer = (state, action) => {
 
 function Quiz() {
   const { id } = useParams();
-  // eslint-disable-next-line no-unused-vars
   const { loading, error, questions } = useQuestions(id);
-  // eslint-disable-next-line no-unused-vars
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const [qna, dispatch] = useReducer(reducer, initialState);
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch({
@@ -55,17 +57,64 @@ function Quiz() {
     });
   }
 
+  // Handle prev question functions
+  function prevQuestion() {
+    if (currentQuestion >= 1 && currentQuestion <= questions.length) {
+      setCurrentQuestion((prevCurrent) => prevCurrent - 1);
+    }
+  }
+
+  // Handle next question functions
+  function nextQuestion() {
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion((prevCurrent) => prevCurrent + 1);
+    }
+  }
+
+  //quiz submit function
+  async function submit() {
+    const { uid } = currentUser;
+
+    const db = getDatabase();
+    const resultRef = ref(db, `result/${uid}`);
+
+    await set(resultRef, {
+      [id]: qna,
+    });
+
+    navigate(`/result/${id}`, {
+      state: {
+        qna,
+      },
+    });
+  }
+
+  //calculate percentage of answer progress
+  const percentage =
+    questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0;
+
   return (
     <>
-      <h1>{qna[currentQuestion].title}</h1>
-      {console.log(qna)}
-      <h4>Question can have multiple answers</h4>
-      <Answers
-        options={qna[currentQuestion].options}
-        handleChange={handleAnswerChange}
-      />
-      <ProgressBar />
-      <MiniPlayer />
+      {loading && <div>Loading...</div>}
+      {error && <div>Error loading component!</div>}
+      {!loading && !error && qna && qna.length > 0 && (
+        <>
+          <h1>{qna[currentQuestion].title}</h1>
+          <h4>Question can have multiple answers</h4>
+          <Answers
+            input={true}
+            options={qna[currentQuestion].options}
+            handleChange={handleAnswerChange}
+          />
+          <ProgressBar
+            next={nextQuestion}
+            prev={prevQuestion}
+            submit={submit}
+            progress={percentage}
+          />
+          <MiniPlayer />
+        </>
+      )}
     </>
   );
 }
