@@ -42,6 +42,7 @@ function Quiz() {
   const navigate = useNavigate();
   const data = useLocation();
   const { state } = data;
+
   const { videoTitle } = state;
 
   useEffect(() => {
