@@ -1,9 +1,10 @@
+import { useMemo } from 'react';
 import SuccessImg from '../assets/images/success.png';
 import useFetch from '../hooks/useFetch';
 import classes from '../styles/Summary.module.css';
 
-function Summary({ score, noq }) {
-  const getKeyword = () => {
+export default function Summary({ score, noq }) {
+  const getKeyword = useMemo(() => {
     if ((score / (noq * 5)) * 100 < 50) {
       return 'failed';
     } else if ((score / (noq * 5)) * 100 < 75) {
@@ -13,7 +14,8 @@ function Summary({ score, noq }) {
     } else {
       return 'excellent';
     }
-  };
+  }, [score, noq]);
+
   const { loading, error, result } = useFetch(
     `https://api.pexels.com/v1/search?query=${getKeyword}&per_page=1`,
     'GET',
@@ -22,7 +24,7 @@ function Summary({ score, noq }) {
     },
   );
 
-  const image = result ? result?.photos[0].src.medium : SuccessImg;
+  const image = result ? result.photos[0].src.medium : SuccessImg;
 
   return (
     <div className={classes.summary}>
@@ -45,5 +47,3 @@ function Summary({ score, noq }) {
     </div>
   );
 }
-
-export default Summary;

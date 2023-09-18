@@ -18,6 +18,7 @@ function useFetch(url, method, headers) {
         setLoading(false);
         setResult(data);
       } catch (err) {
+        console.log(err);
         setLoading(false);
         setError(true);
       }
