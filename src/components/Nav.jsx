@@ -10,7 +10,6 @@ function Nav() {
         <li>
           <Link to="/" className={classes.brand}>
             <img src={Logo} alt="Learn with Sumit Logo" />
-            <h3>Learn with Sumit</h3>
           </Link>
         </li>
       </ul>
