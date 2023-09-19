@@ -6,13 +6,13 @@ import classes from '../styles/Summary.module.css';
 export default function Summary({ score, noq }) {
   const getKeyword = useMemo(() => {
     if ((score / (noq * 5)) * 100 < 50) {
-      return 'failed';
+      return 'dankey';
     } else if ((score / (noq * 5)) * 100 < 75) {
-      return 'good';
+      return 'cheetah';
     } else if ((score / (noq * 5)) * 100 < 100) {
-      return 'very good';
+      return 'tiger';
     } else {
-      return 'excellent';
+      return 'lion';
     }
   }, [score, noq]);
 
